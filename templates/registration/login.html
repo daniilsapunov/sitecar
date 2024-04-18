@@ -1,0 +1,33 @@
+{% extends 'carsite/base.html' %}
+{% block main %}
+{% endblock %}
+{% block body %}
+<style>
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 20vh; /* 100% высоты видимой области браузера */
+    }
+</style>
+<div class="container">
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label  class="form-label">Login</label><br>
+            {{ form.username }}
+            <div class="mb-3">
+                <label class="form-label">Password</label><br>
+                {{ form.password }}
+            </div>
+            <input type="submit" class="btn btn-primary" value="Login">
+            <input type="hidden" name="next" value="{{ next }}">
+            <a href="{% url 'carsite:sign_up' %}" class="btn btn-link">Sign Up</a>
+    </form>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,23 @@
+{% extends 'carsite/base.html' %}
+{% block main %}
+{% endblock %}
+
+{% block body %}
+<style>
+    .container {
+      position: relative; top: 1vh; left: 10vh;"
+      color: red;
+    }
+</style>
+
+{% if product %}
+{% for product in product %}
+
+<legend><h1 style="margin-bottom: 20px; margin-left: 260px;"><a href="{% url 'carsite:detail' product.id %}">{{product.name}}</a>
+</h1></legend>
+
+{% endfor %}
+{% endif %}
+
+{%endblock%}
+
