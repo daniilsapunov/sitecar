@@ -1,0 +1,83 @@
+{% extends 'carsite/base.html' %}
+{% block main%}
+{% endblock %}
+{% block 1%}
+{% endblock %}
+{% block body%}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 col-lg-offset-0">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card-body">
+                        <a href="{% url 'carsite:forum'%}" class="btn btn-secondary">
+                            Back to Threads
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row pad">
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="card-body">
+                                    <div class="col-lg-12">
+                                        <p style="font-size: 30px;" class="card-text">Создание вопроса от {{user}}</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="panel panel-primary reply" id="r1" style="border-radius: 10px;">
+                        <div class="panel-body">
+                            <div class="row reply">
+                                <div class="col-lg-9">
+                                    <div class="reply-msg">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="row pad">
+                        <div class="col-lg-12 pad">
+                            <div class="panel panel-primary">
+                                <div class="panel-body pad" id="_reply">
+                                    {% csrf_token %}
+                                    <div class="card-body">
+                                        <form action="{% url 'carsite:forum' %}" method="post">
+                                            {% csrf_token %}
+                                            title: <input type="text" name="title"><br>
+                                            content: <input type="text" name="content"><br>
+                                            <label for="category">Выберите категорию:</label>
+                                            <select id="category" name="category">
+                                                {% for cat in category%}
+                                                f:{{cat.name}}
+                                                <option value={{cat.id}}>{{cat.name}}</option>
+                                                {% endfor %}
+                                                <br>
+                                                <input type="submit" value="submit" class="btn btn-primary"/>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                {% endblock %}

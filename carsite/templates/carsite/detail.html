@@ -2,6 +2,8 @@
 {% block main %}
 {% endblock %}
 
+{% block 1%}
+{%endblock%}
 {% block body %}
 <style>
     .container {
@@ -21,8 +23,13 @@
 Модель: {{product.name}}<br>
 Тип двигателя:{{product.engine}}<br>
 Цена:{{product.price}}$<br>
-
+<h2>Category:<a href="{% url 'carsite:category' product.category.id%}">{{product.category}}</a></h2>
+{% if user.is_authenticated %}
+<form action="{% url 'carsite:add_to_cart' %}?next={{ request.path }}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="{{product.id}}"/>
+    <input type="submit" value="Добавитьв корзину" class="btn btn-link"/>
+{%endif%}
 {% endif %}
-
 {%endblock%}
 

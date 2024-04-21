@@ -1,9 +1,20 @@
 from django.contrib import admin
-from .models import Category, Product
+from .models import Category, Product, CategoryForTopic, Topic, Comment
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 # Register your models here.
 admin.site.register(Product)
+admin.site.register(CategoryForTopic)
+admin.site.register(Topic)
+
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('author', 'email', 'post', 'created', 'active')
+    list_filter = ('active', 'created', 'updated')
+    search_fields = ('author', 'email', 'body')
+
+
+admin.site.register(Comment, CommentAdmin)
 
 
 class ProductInline(admin.StackedInline):

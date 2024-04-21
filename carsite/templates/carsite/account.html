@@ -1,0 +1,36 @@
+{% extends 'carsite/base.html' %}
+{% block main %}
+{% endblock %}
+{% block 1%}
+{%endblock%}
+{% block body %}
+<br>
+<p>Имя: <form action="{% url 'carsite:account' %}" method="post">
+    {% csrf_token %}
+    <input type="text" name='first_name' value={{first_name}}>
+    <input type="submit" value="update" class="btn btn-danger"/>
+    <input type="hidden" name="user" value="{{user}}"/>
+</form>
+</p>
+<p>Фамилия:
+<form action="{% url 'carsite:account' %}" method="post">
+    {% csrf_token %}
+    <input type="text" name='last_name' value={{last_name}}>
+    <input type="submit" value="update" class="btn btn-danger"/>
+    <input type="hidden" name="user" value="{{user}}"/>
+</form>
+</p>
+<p>Электронная почта:
+<form action="{% url 'carsite:account' %}" method="post">
+    {% csrf_token %}
+    <input type="text" name='email' value={{email}}>
+    <input type="submit" value="update" class="btn btn-danger"/>
+    <input type="hidden" name="user" value="{{user}}"/>
+</form>
+</p>
+<legend>Последние 5 заказов:</legend><br>
+{% for order in order %}
+Status: {{order.status}}  Total price: {{order.count}}$ Count: {{order.amount}}<br>
+{% endfor %}
+        <li><a href="{% url 'carsite:order_history'%}">История заказов</a></li>
+{% endblock %}

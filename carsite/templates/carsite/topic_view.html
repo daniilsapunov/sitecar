@@ -1,0 +1,35 @@
+{% extends 'carsite/base.html' %}
+{% block main%}
+{% endblock %}
+{% block 1%}
+{% endblock %}
+{% block body%}
+Name: {{topic.title}}<br>
+Content: {{topic.content}}<br>
+Задал вопрос: {{topic.author}}<br> Время: {{topic.created_at}}<br> Тема: {{topic.category}}<br>
+{% if new_comment %}
+<h2>Your comment has been added.</h2>
+{% else %}
+<h2>Add a new comment</h2>
+<form action="{% url 'carsite:thread_view' topic.id %}" method="post">
+    {{topic.author}}
+    {{ comment_form.as_p }}
+    {% csrf_token %}
+    <p><input type="submit" value="Add comment"></p>
+</form>
+{% endif %}
+
+Комментариев: {{t.count}}
+{% for comment in t %}
+<div class="comment">
+    <p class="info">
+        Comment {{ forloop.counter }} by {{ comment.author }}
+        {{ comment.created }}
+    </p>
+    {{ comment.body|linebreaks }}
+</div>
+{% empty %}
+<p>There are no comments yet.</p>
+{% endfor %}
+
+{% endblock %}

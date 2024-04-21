@@ -48,7 +48,8 @@
                     </a>
                     <ul class="dropdown-menu">
                         {% for category in category %}
-                        <li><a class="dropdown-item" href="{% url 'carsite:category' category.id%}">{{category.name}}</a></li>
+                        <li><a class="dropdown-item"
+                               href="{% url 'carsite:category' category.id%}">{{category.name}}</a></li>
                         {% endfor %}
                         <li><a class="dropdown-item" href="{% url 'carsite:categories'%}">В наличии</a></li>
                     </ul>
@@ -67,8 +68,22 @@
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="#">Сервисы</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'carsite:forum'%}">Форум</a>
+                </li>
+
             </ul>
             <ul class="navbar-nav me-right mb-2 mb-lg-0">
+                {% if user.is_authenticated%}
+                <form action="{% url 'carsite:account'  %}?next={{ request.path }}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Личный кабинет" class="nav-link"/>
+                </form>
+                <form action="{% url 'carsite:shopping_cart'  %}?next={{ request.path }}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Корзина" class="nav-link"/>
+                </form>
+                {% endif %}
                 {% if not user.is_authenticated%}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -77,7 +92,8 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" aria-current="page" href="{% url 'login'%}">Login</a></li>
-                        <li><a class="dropdown-item" aria-current="page" href="{% url 'carsite:sign_up'%}">Sign up</a></li>
+                        <li><a class="dropdown-item" aria-current="page" href="{% url 'carsite:sign_up'%}">Sign up</a>
+                        </li>
                         {% else %}
                         <ul class="navbar-nav me-right mb-2 mb-lg-0">
                             <form action="{% url 'logout'  %}?next={{ request.path }}" method="post">
@@ -92,6 +108,7 @@
         </div>
     </div>
 </nav>
+{% block 1%}
 <div class="container">
     <div class="title aem-GridColumn aem-GridColumn--default--12" bis_skin_checked="1">
         <div bis_skin_checked="1">
@@ -102,6 +119,7 @@
         </div>
     </div>
 </div>
+{% endblock%}
 {% block body %}
 {% endblock %}
 </body>
