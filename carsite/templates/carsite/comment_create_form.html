@@ -1,0 +1,16 @@
+
+{% extends 'carsite/base.html' %}
+{% block main %}
+{% endblock %}
+
+{% block 1%}
+{%endblock%}
+{% block body %}
+    <h1>Post a Comment</h1>
+    <form action="{% url 'comment-create' topic.id %}" method="post">
+        {% csrf_token %}
+        <label for="body">Comment:</label>
+        <textarea name="body" id="body" cols="30" rows="10"></textarea>
+        <input type="submit" value="Post Comment">
+    </form>
+{% endblock %}

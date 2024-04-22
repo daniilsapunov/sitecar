@@ -3,33 +3,81 @@
 {% endblock %}
 {% block 1%}
 {% endblock %}
-{% block body%}
-Name: {{topic.title}}<br>
-Content: {{topic.content}}<br>
-Задал вопрос: {{topic.author}}<br> Время: {{topic.created_at}}<br> Тема: {{topic.category}}<br>
-{% if new_comment %}
-<h2>Your comment has been added.</h2>
-{% else %}
-<h2>Add a new comment</h2>
-<form action="{% url 'carsite:thread_view' topic.id %}" method="post">
-    {{topic.author}}
-    {{ comment_form.as_p }}
-    {% csrf_token %}
-    <p><input type="submit" value="Add comment"></p>
-</form>
-{% endif %}
 
-Комментариев: {{t.count}}
-{% for comment in t %}
-<div class="comment">
-    <p class="info">
-        Comment {{ forloop.counter }} by {{ comment.author }}
-        {{ comment.created }}
-    </p>
-    {{ comment.body|linebreaks }}
-</div>
-{% empty %}
-<p>There are no comments yet.</p>
-{% endfor %}
+{% block body %}
+
+<style>
+    .reply-window {
+        display: none;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .reply-window textarea {
+        width: 100%;
+        resize: vertical;
+        min-height: 60px;
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .reply-window .submit-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+</style>
+
+<h2>Comments</h2>
+<ul>
+    {% for comment in topic.comments.all %}
+    <li>{{ comment.body }} - Posted by {{ comment.author }} on {{ comment.created }}</li>
+    <ul>
+        {% for child_comment in comment.child_comments.all %}
+        <li>{{ child_comment.text }} - Posted by {{ child_comment.author }} on {{ child_comment.created_at }}</li>
+        {% endfor %}
+    </ul>
+    <form action="{% url 'carsite:child-comment-create' comment_id=comment.id %}" method="post" id="comment-form-{{ comment.id }}">
+        {% csrf_token %}
+        <a class="reply-link" onclick="toggleReplyWindow('{{ comment.id }}')">Reply</a>
+        <div class="reply-window" id="reply-window-{{ comment.id }}">
+            <textarea name="text" id="text-{{ comment.id }}" cols="30" rows="10" placeholder="Write your reply here..."></textarea>
+            <button class="submit-button" onclick="submitReply('{{ comment.id }}')">Post Reply</button>
+        </div>
+    </form>
+    {% endfor %}
+</ul>
+
+<script>
+    function toggleReplyWindow(commentId) {
+        var replyWindow = document.getElementById('reply-window-' + commentId);
+        replyWindow.style.display = replyWindow.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function submitReply(commentId) {
+        var replyTextarea = document.getElementById('text-' + commentId);
+        var replyText = replyTextarea.value;
+        // Perform necessary actions to submit the reply to the server
+        // ...
+        // Clear the input field after submission
+        replyTextarea.value = '';
+    }
+</script>
+
+</ul>
+Коммент
+<form action="{% url 'carsite:comment-create' topic.id %}" method="post">
+    {% csrf_token %}
+    <label for="body">Comment:</label>
+    <textarea name="body" id="body" cols="30" rows="10"></textarea>
+    <input type="submit" value="Post Comment">
+</form>
+
 
 {% endblock %}

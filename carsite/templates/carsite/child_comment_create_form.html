@@ -1,0 +1,15 @@
+{% extends 'carsite/base.html' %}
+{% block main %}
+{% endblock %}
+
+{% block 1%}
+{%endblock%}
+{% block body %}
+    <h1>Post a Child Comment</h1>
+    <form action="{% url 'carsite:child-comment-create' comment.id %}" method="post">
+        {% csrf_token %}
+        <label for="text">Comment:</label>
+        <textarea name="text" id="text" cols="30" rows="10"></textarea>
+        <input type="submit" value="Post Comment">
+    </form>
+{% endblock %}

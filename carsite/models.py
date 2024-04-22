@@ -34,20 +34,23 @@ class Comment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
-    parent = models.ForeignKey(
-        'self',
-        default=None,
-        blank=True, null=True,
-        on_delete=models.CASCADE,
-        related_name='parent_%(class)s',
-        verbose_name='parent comment'
-    )
+    child_posts = models.ManyToManyField('ChildComment', blank=True)
 
     class Meta:
         ordering = ('created',)
 
     def __str__(self):
         return 'Comment by {} on {}'.format(self.author, self.post)
+
+
+class ChildComment(models.Model):
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    parent_comment = models.ForeignKey('Comment', on_delete=models.CASCADE, related_name='child_comments')
+
+    def __str__(self):
+        return f"Child comment by {self.author.username} on {self.parent_comment.body}"
 
 
 class Category(models.Model):

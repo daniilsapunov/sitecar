@@ -31,6 +31,8 @@ urlpatterns = [
     path('repeat_order', views.repeat_order, name='repeat_order'),
     path('forum', views.forum_main, name='forum'),
     path('thread', views.add_topic, name='thread'),
-    path('thread/<int:thread_id>', views.topic_view, name='thread_view')
+    path('thread/<int:thread_id>', views.topic_detail, name='thread_view'),
+    path('comment-create/<int:thread_id>', views.comment_create, name='comment-create'),
+    path('child-comment-create/<int:comment_id>', views.child_comment_create, name='child-comment-create')
 
 ]

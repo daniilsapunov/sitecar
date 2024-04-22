@@ -1,11 +1,12 @@
 from django.contrib import admin
-from .models import Category, Product, CategoryForTopic, Topic, Comment
+from .models import Category, Product, CategoryForTopic, Topic, Comment, ChildComment
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 # Register your models here.
 admin.site.register(Product)
 admin.site.register(CategoryForTopic)
 admin.site.register(Topic)
+admin.site.register(ChildComment)
 
 
 class CommentAdmin(admin.ModelAdmin):
