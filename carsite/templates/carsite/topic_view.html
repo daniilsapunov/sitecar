@@ -1,12 +1,55 @@
 {% extends 'carsite/base.html' %}
-{% block main%}
+
+{% block main %}
 {% endblock %}
-{% block 1%}
+
+{% block 1 %}
 {% endblock %}
 
 {% block body %}
 
 <style>
+    .comment-form {
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0069d9;
+    }
+
     .reply-window {
         display: none;
         background-color: #f9f9f9;
@@ -25,59 +68,205 @@
     }
 
     .reply-window .submit-button {
-        background-color: #4CAF50;
+        background-color: #007bff;
         color: white;
         border: none;
         padding: 8px 12px;
         cursor: pointer;
         border-radius: 4px;
     }
+
+    /* Updated styles for improved visual harmony */
+
+    h2 {
+        margin-bottom: 10px;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin-bottom: 10px;
+    }
+
+    .comment {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .comment .author {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .comment .created {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .reply-link {
+        color: #007bff;
+        cursor: pointer;
+    }
+
+    .reply-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Updated styles for comment input form */
+
+    .comment-form label {
+        margin-bottom: 5px;
+    }
+
+    .comment-form textarea {
+        height: 100px;
+    }
+
+    .comment-form .btn-primary {
+        margin-top: 10px;
+    }
 </style>
 
-<h2>Comments</h2>
-<ul>
+<h2>{{ topic.title }}</h2>
+<div class="comment">
+    <p>{{ topic.content }}</p>
+    <p class="author">Posted by {{ topic.author }} on {{ topic.created_at }}</p>
+    <p>Category: {{ topic.category }}</p>
+</div>
+<button class="btn btn-primary" id="add-comment-button" onclick="toggleCommentForm()">Добавить комментарий</button>
+
+<form class="comment-form" id="comment-form" action="{% url 'carsite:comment-create' topic.id %}" method="post" style="display: none;">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="body">Комментарий:</label>
+        <textarea class="form-control" name="body" id="body" cols="30" rows="10"></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">Оставить комментарий</button>
+</form>
+
+<h2>Комментарии</h2>
+<ul class="comments-list">
     {% for comment in topic.comments.all %}
-    <li>{{ comment.body }} - Posted by {{ comment.author }} on {{ comment.created }}</li>
-    <ul>
-        {% for child_comment in comment.child_comments.all %}
-        <li>{{ child_comment.text }} - Posted by {{ child_comment.author }} on {{ child_comment.created_at }}</li>
-        {% endfor %}
-    </ul>
-    <form action="{% url 'carsite:child-comment-create' comment_id=comment.id %}" method="post" id="comment-form-{{ comment.id }}">
-        {% csrf_token %}
-        <a class="reply-link" onclick="toggleReplyWindow('{{ comment.id }}')">Reply</a>
-        <div class="reply-window" id="reply-window-{{ comment.id }}">
-            <textarea name="text" id="text-{{ comment.id }}" cols="30" rows="10" placeholder="Write your reply here..."></textarea>
-            <button class="submit-button" onclick="submitReply('{{ comment.id }}')">Post Reply</button>
+    <li class="comment">
+        <div class="comment-body">
+            <p>{{ comment.body }}</p>
+            <p class="comment-info">Posted by {{ comment.author }} on {{ comment.created }}</p>
         </div>
-    </form>
+        <div class="comment-actions">
+            <a class="reply-link" onclick="toggleReplyWindow('{{ comment.id }}')">Reply</a>
+        </div>
+        <div class="reply-window" id="reply-window-{{ comment.id }}">
+            <form action="{% url 'carsite:child-comment-create' comment_id=comment.id %}" method="post" id="comment-form-{{ comment.id }}">
+                {% csrf_token %}
+                <textarea name="text" id="text-{{ comment.id }}" cols="30" rows="4" placeholder="Write your reply here..."></textarea>
+                <button class="submit-button" onclick="submitReply('{{ comment.id }}')">Post Reply</button>
+            </form>
+        </div>
+        <ul class="child-comments-list">
+            {% for child_comment in comment.child_comments.all %}
+            <li class="comment">
+                <div class="comment-body">
+                    <p>{{ child_comment.text }}</p>
+                    <p class="comment-info">Posted by {{ child_comment.author }} on {{ child_comment.created_at }}</p>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </li>
     {% endfor %}
 </ul>
 
+<style>
+    .comments-list {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .comment {
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+
+    .comment-body {
+        margin-bottom: 10px;
+    }
+
+    .comment-info {
+        color: #999;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .comment-actions {
+        margin-bottom: 10px;
+    }
+
+    .reply-link {
+        color: #007bff;
+        cursor: pointer;
+    }
+
+    .reply-window {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .comment-form textarea {
+        width: 100%;
+        resize: vertical;
+    }
+
+    .submit-button {
+        margin-top: 10px;
+    }
+
+    .child-comments-list {
+        list-style: none;
+        margin-top: 10px;
+        padding-left: 20px;
+    }
+</style>
+
+
+
 <script>
+    function toggleCommentForm() {
+        var commentForm = document.getElementById('comment-form');
+        var addButton = document.getElementById('add-comment-button');
+        if (commentForm.style.display === 'none') {
+            commentForm.style.display = 'block';
+            addButton.style.display = 'none';
+        } else {
+            commentForm.style.display = 'none';
+            addButton.style.display = 'block';
+        }
+    }
+
     function toggleReplyWindow(commentId) {
         var replyWindow = document.getElementById('reply-window-' + commentId);
         replyWindow.style.display = replyWindow.style.display === 'none' ? 'block' : 'none';
     }
 
-    function submitReply(commentId) {
+   function submitReply(commentId) {
         var replyTextarea = document.getElementById('text-' + commentId);
         var replyText = replyTextarea.value;
-        // Perform necessary actions to submit the reply to the server
+        // Выполните необходимые действия для отправки ответа на сервер
         // ...
-        // Clear the input field after submission
+        // Очистите поле ввода после отправки
         replyTextarea.value = '';
+
+        var replyWindow = document.getElementById('reply-window-' + commentId);
+        replyWindow.style.display = 'none';
+
+        var addButton = document.getElementById('add-comment-button');
+        addButton.style.display = 'block';
     }
 </script>
-
-</ul>
-Коммент
-<form action="{% url 'carsite:comment-create' topic.id %}" method="post">
-    {% csrf_token %}
-    <label for="body">Comment:</label>
-    <textarea name="body" id="body" cols="30" rows="10"></textarea>
-    <input type="submit" value="Post Comment">
-</form>
-
 
 {% endblock %}

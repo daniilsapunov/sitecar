@@ -7,6 +7,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+import json
+from django.http import JsonResponse
 
 
 def main(request):
@@ -358,3 +360,5 @@ def child_comment_create(request, comment_id):
     else:
         form = ChildCommentForm()
     return render(request, 'carsite/child_comment_create_form.html', {'form': form, 'comment': comment})
+
+
