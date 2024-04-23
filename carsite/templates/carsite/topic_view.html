@@ -177,6 +177,19 @@
                     <p>{{ child_comment.text }}</p>
                     <p class="comment-info">Posted by {{ child_comment.author }} on {{ child_comment.created_at }}</p>
                 </div>
+                <div class="comment-actions">
+                    <a class="reply-link" onclick="toggleReplyWindow('{{ child_comment.id }}')">Reply</a>
+                </div>
+                <div class="reply-window" id="reply-window-{{ child_comment.id }}">
+                    <form class="child-comment-form" id="comment-form-{{ child_comment.id }}"
+                          action="{% url 'carsite:child-comment-create' comment_id=child_comment.id %}" method="post">
+                        {% csrf_token %}
+                        <textarea class="form-control" name="text" id="text-{{ child_comment.id }}" cols="30" rows="4"
+                                  placeholder="Write your reply here..."></textarea>
+                        <button class="btn btn-primary" type="submitReply('{{ child_comment.id }}')">Оставить
+                            комментарий
+                        </button>
+                    </form>
             </li>
             {% endfor %}
         </ul>
@@ -249,6 +262,7 @@
             addButton.style.display = 'block';
         }
     }
+
 
     function toggleReplyWindow(commentId) {
         var replyWindow = document.getElementById('reply-window-' + commentId);

@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotFound
 
 
 def main(request):
@@ -259,74 +259,11 @@ def add_topic(request):
     return render(request, 'carsite/thread.html', context)
 
 
-# def topic_view(request, thread_id):
-#     topic = Topic.objects.get(id=thread_id)
-#     if request.method == 'POST':
-#         if 'reply_comment_id' in request.POST:  # Проверка, является ли это ответом на комментарий
-#             parent_comment_id = request.POST.get('reply_comment_id')
-#             parent_comment = Comment.objects.get(id=parent_comment_id)
-#             form = ChildCommentForm(data=request.POST)
-#             if form.is_valid():
-#                 child_comment = form.save(commit=False)
-#                 child_comment.parent_comment = parent_comment
-#                 child_comment.author = request.user
-#                 child_comment.save()
-#         else:  # Обычный комментарий
-#             form = CommentForm(data=request.POST)
-#             if form.is_valid():
-#                 comment = form.save(commit=False)
-#                 comment.post = topic
-#                 comment.author = request.user
-#                 comment.save()
-#     else:
-#         form = CommentForm()
-#
-#     t = Comment.objects.filter(post=thread_id).order_by('-created')
-#     context = {'topic': topic, 't': t, 'form': form,
-#                }
-#     return render(request, 'carsite/topic_view.html', context)
-
-
 def topic_detail(request, thread_id):
     topic = Topic.objects.get(id=thread_id)
     return render(request, 'carsite/topic_view.html', {'topic': topic})
 
 
-# def comment_create(request, thread_id):
-#     topic = Topic.objects.get(id=thread_id)
-#     if request.method == 'POST':
-#         form = CommentForm(request.POST)
-#         if form.is_valid():
-#             comment = form.save(commit=False)
-#             comment.author = request.user
-#             comment.post_id = thread_id
-#             comment.save()
-#             comments = Comment.objects.filter(post_id=thread_id).order_by('-created')
-#             return render(request, 'carsite/topic_view.html',
-#                           {'thread_id': thread_id, 'comments': comments, 'topic': topic})
-#     else:
-#         form = CommentForm()
-#     return render(request, 'carsite/comment_create_form.html', {'form': form})
-
-
-# def child_comment_create(request, comment_id):
-#     if request.method == 'POST':
-#         form = ChildCommentForm(request.POST)
-#         if form.is_valid():
-#             child_comment = form.save(commit=False)
-#             child_comment.author = request.user
-#             child_comment.parent_comment_id = comment_id
-#             child_comment.save()
-#
-#             # Извлечение всех дочерних комментариев для родительского комментария
-#             parent_comment = Comment.objects.get(id=comment_id)
-#             child_comments = parent_comment.child_comments.all().order_by('-created_at')
-#
-#             return render(request, 'carsite/topic_view.html',
-#                           {'thread_id': parent_comment.post.id, 'comments': child_comments})
-#     else:
-#         form = ChildCommentForm()
-#     return render(request, 'carsite/child_comment_create_form.html', {'form': form})
 def comment_create(request, thread_id):
     topic = Topic.objects.get(id=thread_id)
     if request.method == 'POST':
@@ -344,25 +281,21 @@ def comment_create(request, thread_id):
 
 
 def child_comment_create(request, comment_id):
-    comment = Comment.objects.get(id=comment_id)
+    try:
+        parent_comment = Comment.objects.get(id=comment_id)
+    except Comment.DoesNotExist:
+        return HttpResponseNotFound('Parent comment not found')
 
     if request.method == 'POST':
         form = ChildCommentForm(request.POST)
-        print(form)
         if form.is_valid():
-            print('asdasda')
             child_comment = form.save(commit=False)
             child_comment.author = request.user
-            child_comment.parent_comment_id = comment_id
+            child_comment.parent_comment = parent_comment
             child_comment.save()
 
-            parent_comment = Comment.objects.get(id=comment_id)
-            parent_comment.child_posts.add(child_comment)  # Связываем родительский комментарий с дочерним
-
-            return redirect('carsite:thread_view', thread_id=parent_comment.post_id)
+            return redirect('carsite:thread_view', thread_id=child_comment.parent_comment.post_id)
     else:
-
         form = ChildCommentForm()
-    return render(request, 'carsite/child_comment_create_form.html', {'form': form, 'comment': comment})
 
-
+    return render(request, 'carsite/child_comment_create_form.html', {'form': form, 'parent_comment': parent_comment})
