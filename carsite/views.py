@@ -331,6 +331,7 @@ def comment_create(request, thread_id):
     topic = Topic.objects.get(id=thread_id)
     if request.method == 'POST':
         form = CommentForm(request.POST)
+        print(form)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.author = request.user
@@ -344,8 +345,10 @@ def comment_create(request, thread_id):
 
 def child_comment_create(request, comment_id):
     comment = Comment.objects.get(id=comment_id)
+
     if request.method == 'POST':
         form = ChildCommentForm(request.POST)
+        print(form)
         if form.is_valid():
             print('asdasda')
             child_comment = form.save(commit=False)
@@ -358,6 +361,7 @@ def child_comment_create(request, comment_id):
 
             return redirect('carsite:thread_view', thread_id=parent_comment.post_id)
     else:
+
         form = ChildCommentForm()
     return render(request, 'carsite/child_comment_create_form.html', {'form': form, 'comment': comment})
 

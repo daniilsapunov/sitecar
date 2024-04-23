@@ -140,7 +140,8 @@
 </div>
 <button class="btn btn-primary" id="add-comment-button" onclick="toggleCommentForm()">Добавить комментарий</button>
 
-<form class="comment-form" id="comment-form" action="{% url 'carsite:comment-create' topic.id %}" method="post" style="display: none;">
+<form class="comment-form" id="comment-form" action="{% url 'carsite:comment-create' topic.id %}" method="post"
+      style="display: none;">
     {% csrf_token %}
     <div class="form-group">
         <label for="body">Комментарий:</label>
@@ -161,10 +162,12 @@
             <a class="reply-link" onclick="toggleReplyWindow('{{ comment.id }}')">Reply</a>
         </div>
         <div class="reply-window" id="reply-window-{{ comment.id }}">
-            <form action="{% url 'carsite:child-comment-create' comment_id=comment.id %}" method="post" id="comment-form-{{ comment.id }}">
+            <form class="child-comment-form" id="comment-form-{{ comment.id }}"
+                  action="{% url 'carsite:child-comment-create' comment_id=comment.id %}" method="post">
                 {% csrf_token %}
-                <textarea name="text" id="text-{{ comment.id }}" cols="30" rows="4" placeholder="Write your reply here..."></textarea>
-                <button class="submit-button" onclick="submitReply('{{ comment.id }}')">Post Reply</button>
+                <textarea class="form-control" name="text" id="text-{{ comment.id }}" cols="30" rows="4"
+                          placeholder="Write your reply here..."></textarea>
+                <button class="btn btn-primary" type="submitReply('{{ comment.id }}')">Оставить комментарий</button>
             </form>
         </div>
         <ul class="child-comments-list">
@@ -232,7 +235,6 @@
         padding-left: 20px;
     }
 </style>
-
 
 
 <script>
