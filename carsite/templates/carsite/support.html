@@ -1,0 +1,126 @@
+{% extends 'carsite/base.html' %}
+
+{% block main %}
+{% endblock %}
+
+{% block 1 %}
+{% endblock %}
+
+{% block body %}
+<style>
+    .support-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .support-container h2 {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .support-container p {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .support-container ul {
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 10px;
+    }
+
+    .support-container ul li {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .contact-form {
+        margin-top: 20px;
+        text-align: center;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .contact-form button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .contact-form button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Стили для всплывающего сообщения */
+    .success-message {
+        display: none;
+        text-align: center;
+        padding: 10px;
+        background-color: #d4edda;
+        color: #155724;
+        margin-bottom: 10px;
+    }
+
+</style>
+<div class="support-container">
+    <h2>Служба поддержки</h2>
+    <p>Если у вас есть вопросы или вам требуется помощь, не стесняйтесь обратиться в нашу службу поддержки. Мы всегда готовы помочь вам в любых вопросах, связанных с автомобилями.</p>
+    <p>Вы можете связаться с нами по следующим контактным данным:</p>
+    <ul>
+        <li>Телефон: +37544-57-42-482</li>
+        <li>Email: support@carsite.com</li>
+        <li>Адрес: Беларусь, ул. Калинина 3а, г.Белыничи</li>
+    </ul>
+    <p>Наши специалисты ответят на все ваши вопросы и предоставят необходимую поддержку.</p>
+</div>
+
+<div class="contact-form">
+    <h2>Напишите нам</h2>
+    <form action="{% url 'carsite:send_message' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Ваше имя" required>
+        <br>
+        <input type="email" name="email" placeholder="Ваш email" required>
+        <br>
+        <textarea name="message" placeholder="Ваше сообщение" rows="5" required></textarea>
+        <br>
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+
+<!-- Всплывающее сообщение об успешной отправке -->
+<div class="success-message">
+    Ваше сообщение успешно отправлено!
+</div>
+
+<!-- Скрипт для показа всплывающего сообщения -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var successMessage = document.querySelector('.success-message');
+        var form = document.querySelector('form');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            successMessage.style.display = 'block';
+
+            setTimeout(function() {
+                successMessage.style.display = 'none';
+                form.reset();
+            }, 3000); // Сообщение будет скрыто через 3 секунды (3000 миллисекунд)
+        });
+    });
+</script>
+{% endblock %}

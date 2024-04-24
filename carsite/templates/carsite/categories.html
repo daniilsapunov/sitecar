@@ -1,16 +1,88 @@
 {% extends 'carsite/base.html' %}
+
 {% block main %}
 {% endblock %}
 
-{% block 1%}
-{%endblock%}
+{% block 1 %}
+{% endblock %}
 
 {% block body %}
-{% if categories %}
-{% for category in categories %}
-<legend><h1 style="margin-bottom: 40px; margin-left: 10px;"><a href="{% url 'carsite:category' category.id %}">{{category.name}}</a>
-    <br>
-{%endfor%}
-{% endif%}
+<style>
+    .additional-content {
+    margin-bottom: 20px;
+    text-align: center;
+}
 
-{%endblock%}
+.additional-content h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.additional-content p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.category-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.category {
+    width: 300px;
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f6f6f6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.category:hover {
+    transform: translateY(-5px);
+}
+
+.category h1 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.category p {
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+.no-categories {
+    text-align: center;
+}
+
+.no-categories p {
+    font-size: 16px;
+    margin-bottom: 0;
+}
+</style>
+<div class="additional-content">
+    <h2>Добро пожаловать на наш сайт автомобилей!</h2>
+    <p>Исследуйте наш широкий спектр категорий автомобилей и найдите идеальное транспортное средство для ваших потребностей. Будь вы ищете роскошные автомобили, спортивные машины или варианты для семейных поездок, у нас есть все, что вам нужно.</p>
+    <p>Пройдите по представленным ниже категориям, чтобы узнать о последних моделях, прочитать подробные описания и принять информированные решения. Наша цель - обеспечить вам исключительный опыт выбора автомобиля.</p>
+    <p>Если у вас возникнут вопросы или вам потребуется помощь, не стесняйтесь обращаться в нашу службу<a href="{% url 'carsite:support'%}"> поддержки</a> клиентов. Приятного поиска автомобиля!</p>
+</div>
+{% if categories %}
+    <div class="category-container">
+        {% for category in categories %}
+            <div class="category">
+                <h1><a href="{% url 'carsite:category' category.id %}">{{ category.name }}</a></h1>
+                <p>{{ category.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="no-categories">
+        <p>Нет доступных категорий.</p>
+    </div>
+{% endif %}
+
+{% endblock %}

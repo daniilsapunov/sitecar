@@ -1,6 +1,112 @@
 {% extends 'carsite/base.html' %}
+
 {% block main %}
 {% endblock %}
 
-{% block 1%}
-{%endblock%}
+{% block 1 %}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="content">
+        <div class="services">
+            <h1>Автосервисы</h1>
+            {% for service in services %}
+                <div class="service">
+                    <h2>
+                        <a href="#" onclick="showServiceOnMap({{ service.latitude }}, {{ service.longitude }})">
+                            {{ service.name }}
+                        </a>
+                    </h2>
+                    <p>Наши услуги:</p>
+                    <ul>
+                        {% for category in service.category.all %}
+                            <li>{{ category }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="map"></div>
+    </div>
+</div>
+
+<head>
+    <title>Yandex Map Example</title>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ea42fc55-ef65-4567-b523-c3657be6f7ec&lang=en_US"
+            type="text/javascript"></script>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+        }
+
+        .content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .services {
+            flex: 1;
+        }
+
+        .service {
+            margin-bottom: 20px;
+        }
+
+        #map {
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+<script>
+    var map;
+
+    ymaps.ready(init);
+
+    function init() {
+        map = new ymaps.Map("map", {
+            center: [53.9, 27.5667], // Центр координат Минска
+            zoom: 13 // Уровень масштабирования по умолчанию
+        });
+
+        {% for service in services %}
+          addPlacemark({{ service.id }}, {{ service.latitude }}, {{ service.longitude }}, "{{ service.name }}");
+        {% endfor %}
+    }
+
+    function addPlacemark(serviceId, latitude, longitude, name) {
+        ymaps.geocode([latitude, longitude]).then(function (res) {
+            var firstGeoObject = res.geoObjects.get(0);
+            var address = firstGeoObject.getAddressLine();
+
+            var placemark = new ymaps.Placemark(
+                [latitude, longitude],
+                {
+                    hintContent: name,
+                    balloonContent: address
+                }
+            );
+
+            placemark.events.add('click', function () {
+                map.setCenter([latitude, longitude], 15); // Установка центра карты на выбранной метке
+            });
+
+            map.geoObjects.add(placemark);
+        });
+    }
+
+    function showServiceOnMap(latitude, longitude) {
+        map.setCenter([latitude, longitude], 15); // Установка центра карты на выбранной метке
+    }
+</script>
+</body>
+{% endblock %}

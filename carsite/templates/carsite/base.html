@@ -1,21 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 {% load static %}
 
 {% block main %}
 <style>
     body {
-      background-image: url('{% static 'images/4.jpg' %}');
-      background-size: cover;
-      background-position: down;
-      background-repeat: no-repeat;
+        background-image: url('/static/images/4.jpg');
+        background-size: cover;
+        background-position: down;
+        background-repeat: no-repeat;
     }
-      .container {
-        position: relative; top: 81vh; left: 37vh;"
+
+    .container {
+        position: relative;
+        top: 81vh;
+        left: 37vh;
         color: red;
-      }
+    }
+    .cont {
+        position: relative;
+        top: 0vh;
+        left: -6vh;
+    }
 </style>
-{% endblock %}
+{% endblock%}
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,17 +33,22 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
+
+    <!-- Other head content -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
 </head>
+</head>
+
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'carsite:main'%}">
-            <img src="{% static 'images/2.svg' %}" alt="Logo" width="30" height="24"
+            <img src="/static/images/2.svg" alt="Logo" width="30" height="24"
                  class="d-inline-block align-text-top">
             BMW
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -47,26 +60,15 @@
                         Автомобили
                     </a>
                     <ul class="dropdown-menu">
-                        {% for category in category %}
-                        <li><a class="dropdown-item"
-                               href="{% url 'carsite:category' category.id%}">{{category.name}}</a></li>
-                        {% endfor %}
-                        <li><a class="dropdown-item" href="{% url 'carsite:categories'%}">В наличии</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Покупка онлайн
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Предзаказ</a></li>
-                        <li><a class="dropdown-item" href="#">В наличии</a></li>
+                        <li><a class="dropdown-item" href="{% url 'carsite:categories'%}">Категории</a></li>
                     </ul>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="#">Сервисы</a>
+                    <a class="nav-link" aria-current="page" href="{%url 'carsite:service'%}">Сервисы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'carsite:support'%}">Поддержка</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="{% url 'carsite:forum'%}">Форум</a>
@@ -74,36 +76,46 @@
 
             </ul>
             <ul class="navbar-nav me-right mb-2 mb-lg-0">
-                {% if user.is_authenticated%}
-                <form action="{% url 'carsite:account'  %}?next={{ request.path }}" method="post">
+                {% if user.is_authenticated %}
+                <form action="{% url 'carsite:shopping_cart' %}?next={{ request.path }}" method="post">
                     {% csrf_token %}
-                    <input type="submit" value="Личный кабинет" class="nav-link"/>
+                    <button type="submit" class="nav-link" style="background: none; border: none;">
+                        <i class="fas fa-shopping-cart"></i> <!-- Font Awesome cart icon -->
+                    </button>
                 </form>
-                <form action="{% url 'carsite:shopping_cart'  %}?next={{ request.path }}" method="post">
+                <form action="{% url 'carsite:account' %}?next={{ request.path }}" method="post">
                     {% csrf_token %}
-                    <input type="submit" value="Корзина" class="nav-link"/>
+                    <button type="submit" class="nav-link" style="background: none; border: none;">
+                        {{ user.username }}
+                    </button>
                 </form>
-                {% endif %}
-                {% if not user.is_authenticated%}
+            </ul>
+
+            {% endif %}
+            {% if not user.is_authenticated%}
+            <div class="cont">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
                         Account
                     </a>
+
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" aria-current="page" href="{% url 'login'%}">Login</a></li>
-                        <li><a class="dropdown-item" aria-current="page" href="{% url 'carsite:sign_up'%}">Sign up</a>
-                        </li>
-                        {% else %}
-                        <ul class="navbar-nav me-right mb-2 mb-lg-0">
-                            <form action="{% url 'logout'  %}?next={{ request.path }}" method="post">
-                                {% csrf_token %}
-                                <input type="submit" value="Logout" class="nav-link"/>
-                            </form>
-                        </ul>
-                        {% endif %}
+                        <li><a class```html
+                        <li><a class="dropdown-item" aria-current="page" href="{% url 'carsite:sign_up'%}">Sign
+                            up</a></li>
                     </ul>
                 </li>
+                {% else %}
+                <ul class="navbar-nav me-right mb-2 mb-lg-0">
+                    <form action="{% url 'logout'  %}?next={{ request.path }}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="Logout" class="nav-link"/>
+                    </form>
+            </div>
+            </ul>
+            {% endif %}
             </ul>
         </div>
     </div>
@@ -112,10 +124,16 @@
 <div class="container">
     <div class="title aem-GridColumn aem-GridColumn--default--12" bis_skin_checked="1">
         <div bis_skin_checked="1">
-            <div id="title-e0301e5f73" class="cmp-title " style="color: white;" data-component-path="title-v1"
+            <div id="title-e0301e5f73" class="cmp-title" style="color: white;" data-component-path="title-v1"
                  bis_skin_checked="1">
-                <h1
-                        class="cmp-title__text "> BMW i5 M60 xDrive.Электромобиль на все 100% </h1></div>
+                <h1 class="cmp-title__text">BMW i5 M60 xDrive. Электромобиль на все 100%</h1>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 text-right">
+                    <a href="{% url 'carsite:detail' 17 %}" data-toggle="modal" class="btn btn-link"
+                       title="">Подробнее</a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

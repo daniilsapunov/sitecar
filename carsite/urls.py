@@ -33,6 +33,8 @@ urlpatterns = [
     path('thread', views.add_topic, name='thread'),
     path('thread/<int:thread_id>', views.topic_detail, name='thread_view'),
     path('comment-create/<int:thread_id>', views.comment_create, name='comment-create'),
-    path('child-comment-create/<int:comment_id>', views.child_comment_create, name='child-comment-create')
-
+    path('child-comment-create/<int:comment_id>', views.child_comment_create, name='child-comment-create'),
+    path('support', views.support, name='support'),
+    path('send_message', views.send_email, name='send_message'),
+    path('service', views.service, name='service'),
 ]

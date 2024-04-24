@@ -2,17 +2,22 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 
 from .forms import CommentForm, ChildCommentForm
-from .models import Product, Category, Order, OrderEntry, Profile, Topic, ChildComment, CategoryForTopic, Comment
+from .models import Product, Category, Order, OrderEntry, Profile, Topic, ChildComment, CategoryForTopic, Comment, \
+    Service
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 import json
 from django.http import JsonResponse, HttpResponseNotFound
+from django.core.mail import send_mail
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 def main(request):
-    context = {'category': Category.objects.all(), '1': 1}
+    user = request.user
+    context = {'category': Category.objects.all(), '1': 1, 'user': user}
     return render(request, 'carsite/base.html', context)
 
 
@@ -299,3 +304,30 @@ def child_comment_create(request, comment_id):
         form = ChildCommentForm()
 
     return render(request, 'carsite/child_comment_create_form.html', {'form': form, 'parent_comment': parent_comment})
+
+
+def support(request):
+    return render(request, 'carsite/support.html')
+
+
+@csrf_exempt
+def send_email(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        # Отправка письма
+        send_mail(
+            'Новое сообщение от пользователя',
+            f'Имя: {name}\nEmail: {email}\nСообщение: {message}',
+            'sapunowdany@yandex.ru',
+            ['sapunowdany@yandex.ru'],  # Замените на вашу почту для получения сообщений
+            fail_silently=False,
+        )
+    return render(request, 'carsite/support.html')
+
+
+def service(request):
+    services = Service.objects.all()
+    return render(request, 'carsite/service.html', {'services': services})

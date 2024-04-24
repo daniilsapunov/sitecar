@@ -2,6 +2,23 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class Service(models.Model):
+    name = models.CharField(max_length=100)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+    def __str__(self):
+        return self.name
+
+
+class CategoryService(models.Model):
+    name = models.CharField(max_length=100)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='category')
+
+    def __str__(self):
+        return self.name
+
+
 class CategoryForTopic(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -35,7 +52,6 @@ class Comment(models.Model):
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
     child_posts = models.ManyToManyField('ChildComment', blank=True)
-
 
     class Meta:
         ordering = ('created',)

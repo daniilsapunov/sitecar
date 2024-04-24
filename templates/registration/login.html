@@ -1,36 +1,93 @@
 {% extends 'carsite/base.html' %}
+
 {% block main %}
 {% endblock %}
 
-{% block 1%}
-{%endblock%}
+{% block 1 %}
+{% endblock %}
+
 {% block body %}
 <style>
     .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 20vh; /* 100% высоты видимой области браузера */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+    }
+
+    .form-container {
+        width: 400px;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-container label {
+        font-weight: bold;
+    }
+
+    .form-container input[type="text"],
+    .form-container input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-container input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .form-container input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    .form-container .form-footer {
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .form-container .form-footer a {
+        color: #007bff;
+        text-decoration: none;
     }
 </style>
 <div class="container">
-    {% if form.errors %}
-        <p>Your username and password didn't match. Please try again.</p>
-    {% endif %}
-    <form method="POST" action="{% url 'login' %}">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label  class="form-label">Login</label><br>
-            {{ form.username }}
+    <div class="form-container">
+        {% if form.errors %}
+            <p class="text-danger text-center">Your username and password didn't match. Please try again.</p>
+        {% endif %}
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <h2>Login</h2>
             <div class="mb-3">
-                <label class="form-label">Password</label><br>
+                <label class="form-label">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
                 {{ form.password }}
             </div>
             <input type="submit" class="btn btn-primary" value="Login">
             <input type="hidden" name="next" value="{{ next }}">
-            <a href="{% url 'carsite:sign_up' %}" class="btn btn-link">Sign Up</a>
-    </form>
+            <div class="form-footer">
+                <a href="{% url 'carsite:sign_up' %}">Sign Up</a>
+            </div>
+        </form>
+    </div>
 </div>
 
 {% endblock %}
-
