@@ -81,21 +81,32 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
-    price = models.FloatField()
-    engine = models.CharField(max_length=100, default=2.0)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
 
+class Engine(models.Model):
+    size = models.FloatField()
+    horse_power = models.IntegerField()
+    category = models.CharField(max_length=100, default='Бензин')
+    speed = models.TextField()
+    price = models.FloatField()
+    engine = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='engines')
+
+    def __str__(self):
+        return self.engine.name
+
+
 class OrderEntry(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='+')
     count = models.IntegerField(default=0)
+    engine = models.ForeignKey('Engine', on_delete=models.CASCADE, default=None, null=True, unique=False)
     order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='order')
 
     def total(self):
-        return f'{self.count * self.product.price}'
+        return f'{self.count * self.engine.price}'
 
     def __str__(self):
         # return f'{self.product} - {self.count} - {self.count * self.product.price}'
@@ -109,6 +120,12 @@ class Order(models.Model):
 
     profile = models.ForeignKey('Profile', on_delete=models.CASCADE, related_name='orders')
     status = models.CharField(max_length=200, default=Status.INITIAL, choices=Status.choices)
+
+    def total(self):
+        total = 0
+        for x in self.order.all():
+            total += x.engine.price * x.count
+        return total
 
     def __str__(self):
         return f"{self.profile.user.username}-{self.status}"

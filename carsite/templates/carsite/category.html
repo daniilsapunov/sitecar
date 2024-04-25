@@ -1,37 +1,50 @@
 {% extends 'carsite/base.html' %}
+
 {% block main %}
 {% endblock %}
 
-{% block 1%}
-{%endblock%}
+{% block 1 %}
+{% endblock %}
 
 {% block body %}
+<div class="container">
+    {% if product %}
+    {% for product in product %}
+    <div class="product">
+        <h1><a href="{% url 'carsite:detail' product.id %}">{{ product.name }}</a></h1>
+        <p>{{ product.description }}</p>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No products found.</p>
+    {% endif %}
+</div>
+
 <style>
     footer {
-        background-color: #f8f9fa;
-        padding: 20px;
-        text-align: center;
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
+      background-color: #f8f9fa;
+      padding: 20px;
+      text-align: center;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
     }
+
     .container {
-      position: relative; top: 1vh; left: 10vh;"
-      color: red;
+      margin: 20px auto;
+      width: 80%;
+    }
+
+    .product {
+      margin-bottom: 40px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
     }
 </style>
 
-{% if product %}
-{% for product in product %}
-
-<legend><h1 style="margin-bottom: 20px; margin-left: 260px;"><a href="{% url 'carsite:detail' product.id %}">{{product.name}}</a>
-</h1></legend>
-
-{% endfor %}
-{% endif %}
 <footer>
     <p>© 2024 My Car Site. All rights reserved.</p>
 </footer>
-{%endblock%}
-
+{% endblock %}

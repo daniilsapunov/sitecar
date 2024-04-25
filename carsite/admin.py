@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, CategoryForTopic, Topic, Comment, ChildComment, Service, CategoryService
+from .models import Category, Product, CategoryForTopic, Topic, Comment, Engine, ChildComment, Service, CategoryService, Order,OrderEntry
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 # Register your models here.
@@ -8,6 +8,9 @@ admin.site.register(CategoryForTopic)
 admin.site.register(Topic)
 admin.site.register(ChildComment)
 admin.site.register(CategoryService)
+admin.site.register(Engine)
+admin.site.register(Order)
+admin.site.register(OrderEntry)
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -19,6 +22,15 @@ class CommentAdmin(admin.ModelAdmin):
 admin.site.register(Comment, CommentAdmin)
 
 
+class EngineInline(admin.StackedInline):
+    model = Engine
+    extra = 1
+
+
+class ProductAdmin(admin.ModelAdmin):
+    inlines = [EngineInline]
+
+
 class ProductInline(admin.StackedInline):
     model = Product
     extra = 0
@@ -27,6 +39,7 @@ class ProductInline(admin.StackedInline):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     inlines = [ProductInline]
+
 
 class CatInline(admin.StackedInline):
     model = CategoryService

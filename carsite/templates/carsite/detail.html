@@ -1,9 +1,11 @@
 {% extends 'carsite/base.html' %}
+
 {% block main %}
 {% endblock %}
 
 {% block 1%}
-{%endblock%}
+{% endblock %}
+
 {% block body %}
 <style>
     footer {
@@ -16,32 +18,56 @@
         width: 100%;
     }
     .container {
-      position: relative; top: 1vh; left: 10vh;"
+      margin: 20px auto;
+      width: 80%;
+    }
+    .title {
       color: red;
     }
 </style>
+
 <div class="container">
     <div class="title aem-GridColumn aem-GridColumn--default--12" bis_skin_checked="1">
         <div bis_skin_checked="1">
-            <div id="title-e0301e5f73" class="cmp-title " data-component-path="title-v1" bis_skin_checked="1"><h1
-                    class="cmp-title__text "> НОВЫЙ BMW iX: ОСНОВНОПОЛОЖНИК НОВОЙ ЭПОХИ</h1></div>
+            <div id="title-e0301e5f73" class="cmp-title " data-component-path="title-v1" bis_skin_checked="1">
+                <h1 class="cmp-title__text">НОВЫЙ BMW iX: ОСНОВНОПОЛОЖНИК НОВОЙ ЭПОХИ</h1>
+            </div>
         </div>
     </div>
+
+    {% if product %}
+    <p>Модель: {{ product.name }}</p>
+    <p>Описание: {{ product.description }}</p>
+    <p>Категория: <a href="{% url 'carsite:category' product.category.id %}">{{ product.category }}</a></p>
+
+    <h2>Комплектации:</h2>
+    <ul>
+        {% for engine in engines %}
+        <li>
+            <p>Тип двигателя: {{ engine.category }}</p>
+            <p>Размер: {{ engine.size }}л(квт)</p>
+            <p>Мощность: {{ engine.horse_power }}лс</p>
+            <p>Разгон до сотни: {{ engine.speed }}</p>
+            <p>Цена: {{ engine.price }}$</p>
+        </li>
+        {% if user.is_authenticated %}
+        <form action="{% url 'carsite:add_to_cart' %}?next={{ request.path }}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{ product.id }}">
+            <input type="hidden" name="id1" value="{{ engine.id }}">
+            <input type="submit" value="Добавить в корзину" class="btn btn-link">
+        </form>
+        {% endif %}
+        {% endfor %}
+    </ul>
+
+
+    {% else %}
+    <p>No products found.</p>
+    {% endif %}
 </div>
-{% if product %}
-Модель: {{product.name}}<br>
-Тип двигателя:{{product.engine}}<br>
-Цена:{{product.price}}$<br>
-<h2>Category:<a href="{% url 'carsite:category' product.category.id%}">{{product.category}}</a></h2>
-{% if user.is_authenticated %}
-<form action="{% url 'carsite:add_to_cart' %}?next={{ request.path }}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="id" value="{{product.id}}"/>
-    <input type="submit" value="Добавитьв корзину" class="btn btn-link"/>
-{%endif%}
-{% endif %}
-    <footer>
+
+<footer>
     <p>© 2024 My Car Site. All rights reserved.</p>
 </footer>
-{%endblock%}
-
+{% endblock %}

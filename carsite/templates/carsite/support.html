@@ -133,22 +133,7 @@
     Ваше сообщение успешно отправлено!
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var successMessage = document.getElementById('success-message');
-        var form = document.getElementById('contact-form');
 
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            successMessage.style.display = 'block';
-
-            setTimeout(function() {
-                successMessage.style.display = 'none';
-                form.reset();
-            }, 3000); // Сообщение будет скрыто через 3 секунды (3000 миллисекунд)
-        });
-    });
-</script>
 <footer>
     <p>© 2024 My Car Site. All rights reserved.</p>
 </footer>

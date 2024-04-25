@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 from .forms import CommentForm, ChildCommentForm
 from .models import Product, Category, Order, OrderEntry, Profile, Topic, ChildComment, CategoryForTopic, Comment, \
-    Service
+    Service, Engine
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib import messages
@@ -58,7 +58,8 @@ def all_detail(request):
 
 def detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    context = {'product': product, 'category': Category.objects.all()}
+    engines = product.engines.all()
+    context = {'product': product, 'engines': engines}
     return render(request, 'carsite/detail.html', context)
 
 
@@ -77,7 +78,9 @@ def category(request, category_id):
 def add_to_cart(request):
     if request.method == 'POST':
         product_id = request.POST['id']
+        engine_id = request.POST['id1']
         product = get_object_or_404(Product, id=product_id)
+        engine = get_object_or_404(Engine, id=engine_id)
         try:
             profile = Profile.objects.get(user=request.user)
             profile.save()
@@ -88,9 +91,14 @@ def add_to_cart(request):
             profile.shopping_cart = Order.objects.create(profile=profile)
             profile.save()
         try:
-            order_entry = OrderEntry.objects.get(order=profile.shopping_cart, product=product)
+            order_entry = OrderEntry.objects.get(order=profile.shopping_cart, product=product, engine=engine)
         except OrderEntry.DoesNotExist:
-            order_entry = OrderEntry.objects.create(order=profile.shopping_cart, product=product)
+            order_entry = OrderEntry.objects.create(order=profile.shopping_cart, product=product, engine=engine)
+        # for i in profile.shopping_cart.order.all():
+        #     if i.product == product:
+        #         i.product.engine = engine
+        #         i.save()
+
         order_entry.count = 1
         order_entry.save()
         return redirect('carsite:detail', product_id)
@@ -107,8 +115,8 @@ def shopping_cart(request):
     order_entry = OrderEntry.objects.filter(order=profile.shopping_cart).order_by('product')
     t = 0
     for i in OrderEntry.objects.filter(order=profile.shopping_cart):
-        t += i.product.price * i.count
-    context = {'order_entry': order_entry, 'total': t}
+        t += i.engine.price * i.count
+    context = {'order_entry': order_entry, 't': t}
 
     return render(request, 'carsite/shopping_cart.html', context)
 
@@ -197,8 +205,8 @@ def account(request):
         entries = i.order.all()
         amount = sum(j.count for j in entries)
         i.amount = amount
-        count = sum(k.product.price * k.count for k in entries)
-        i.count = count
+        # count = sum(k.product.price * k.count for k in entries)
+        # i.count = count
         i.save()
     context = {'first_name': first_name, 'last_name': last_name, 'email': email, 'order': order_entry}
     return render(request, 'carsite/account.html', context)
@@ -213,14 +221,20 @@ def order_history(request):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)'''
     page_obj = Order.objects.filter(profile=profile).filter(status='COMPLETED').order_by('-id')[:5]
+    total = 0
     for i in page_obj:
         entries = i.order.all()
-        i.entries = entries
-        count = sum(k.product.price * k.count for k in entries)
-        i.count = count
-        amount = sum(j.count for j in entries)
-        i.amount = amount
-    context = {'order': order, "page_obj": page_obj}
+        i.count = total
+        for g in entries:
+            print(g.engine)
+            total += g.engine.price
+            print(total)
+
+        # count = sum(k.order.engine.price * k.count for k in entries)
+        # i.count = count
+        # amount = sum(j.count for j in entries)
+        # i.amount = amount
+    context = {'order': order, "page_obj": page_obj, 'total': total}
     return render(request, 'carsite/order_history.html', context)
 
 
@@ -326,6 +340,7 @@ def send_email(request):
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
+        print(name, email, message)
 
         # Отправка письма
         send_mail(

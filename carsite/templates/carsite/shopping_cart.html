@@ -41,7 +41,7 @@
                         <div class="row">
                             <div class="col-lg-8">
                                 <h4><a href="{% url 'carsite:detail' order.product.id %}">{{ order }}</a></h4>
-                                <p>Цена: {{ order.total }}$</p>
+                                <p>Цена:{{order.engine.price}}$</p>
                                 <form action="{% url 'carsite:clear_concrete_order' %}" method="post">
                                     {% csrf_token %}
                                     <div class="text-right"> <!-- Добавлен класс 'text-right' -->
@@ -68,7 +68,7 @@
                             {% csrf_token %}
                             <input type="submit" value="Удалить" class="btn btn-link btn-block btn-lg">
                         </form>
-                        <p class="text-center">Итоговая стоимость: {{ total }}$</p>
+                        <p class="text-center">Итоговая стоимость: {{ t }}$</p>
                     </div>
                     {%else %}
                         Корзина пуста
