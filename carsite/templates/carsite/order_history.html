@@ -11,7 +11,7 @@
     <br>
     Заказ номер: {{order.id}} <br>
     {% for entries in order.entries %}
-        <a href="{% url 'carsite:product_detail' entries.product.id %}">{{entries}}</a>---{{entries.product.price}}$---{{entries.count}}<br>
+        <a href="{% url 'carsite:detail' entries.product.id %}">{{entries}}</a>---{{entries.product.price}}$---{{entries.count}}<br>
     {% endfor %}
     <b>Total:</b> {{order.count}}$<br>
     <form action="{% url 'carsite:repeat_order' %}" method="post">
