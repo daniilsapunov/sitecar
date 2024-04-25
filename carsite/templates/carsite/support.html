@@ -8,6 +8,16 @@
 
 {% block body %}
 <style>
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
+
     .support-container {
         text-align: center;
         margin-bottom: 20px;
@@ -32,6 +42,21 @@
     .support-container ul li {
         font-size: 14px;
         margin-bottom: 5px;
+    }
+    .contact-form {
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        padding: 20px;
+    }
+
+    .contact-form button {
+        margin-top: 10px;
+    }
+
+    .success-message {
+        /* ... предыдущие стили ... */
+        border-radius: 8px;
+        margin-top: 15px;
     }
 
     .contact-form {
@@ -68,12 +93,14 @@
     .success-message {
         display: none;
         text-align: center;
-        padding: 10px;
+        padding: 20px;
         background-color: #d4edda;
         color: #155724;
         margin-bottom: 10px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
     }
-
 </style>
 <div class="support-container">
     <h2>Служба поддержки</h2>
@@ -89,7 +116,7 @@
 
 <div class="contact-form">
     <h2>Напишите нам</h2>
-    <form action="{% url 'carsite:send_message' %}" method="POST">
+    <form action="{% url 'carsite:send_message' %}" method="POST" id="contact-form">
         {% csrf_token %}
         <input type="text" name="name" placeholder="Ваше имя" required>
         <br>
@@ -102,15 +129,14 @@
 </div>
 
 <!-- Всплывающее сообщение об успешной отправке -->
-<div class="success-message">
+<div class="success-message" id="success-message">
     Ваше сообщение успешно отправлено!
 </div>
 
-<!-- Скрипт для показа всплывающего сообщения -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var successMessage = document.querySelector('.success-message');
-        var form = document.querySelector('form');
+        var successMessage = document.getElementById('success-message');
+        var form = document.getElementById('contact-form');
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
@@ -123,4 +149,7 @@
         });
     });
 </script>
+<footer>
+    <p>© 2024 My Car Site. All rights reserved.</p>
+</footer>
 {% endblock %}

@@ -8,6 +8,16 @@
 
 {% block body %}
 <style>
+        footer {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
+
     .form-container {
         max-width: 400px;
         margin: 0 auto;
@@ -69,6 +79,12 @@
     .order-history li {
         margin-bottom: 10px;
     }
+
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+    }
 </style>
 
 <div class="form-container">
@@ -86,19 +102,17 @@
         <li>Status: {{ order.status }} | Total price: {{ order.count }}$ | Count: {{ order.amount }}</li>
         {% endfor %}
     </ul>
-        <ul>
-        {% for order in orders %}
-        <li>Status: {{ order.status }} | Total price: {{ order.count }}$ | Count: {{ order.amount }}</li>
-        {% endfor %}
-    </ul>
     <a href="{% url 'carsite:order_history' %}">История заказов</a>
 </div>
 
+<footer>
+    <p>© 2024 My Car Site. All rights reserved.</p>
+</footer>
 
 
 <script>
-    if ( window.history.replaceState ) {
-        window.history.replaceState( null, null, window.location.href );
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
     }
 </script>
 {% endblock %}

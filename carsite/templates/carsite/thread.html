@@ -7,6 +7,17 @@
 {% endblock %}
 
 {% block body %}
+<style>
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -41,12 +52,36 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="success-message" id="success-message" style="display: none;">
+        Вопрос успешно отправлен!
+    </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var successMessage = document.getElementById('success-message');
+        var form = document.querySelector('form');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            successMessage.style.display = 'block';
+
+            setTimeout(function() {
+                successMessage.style.display = 'none';
+                form.reset();
+            }, 3000); // Сообщение будет скрыто через 3 секунды (3000 миллисекунд)
+        });
+    });
+</script>
+<footer>
+    <p>© 2024 My Car Site. All rights reserved.</p>
+</footer>
 {% endblock %}

@@ -1,43 +1,86 @@
 {% extends 'carsite/base.html' %}
+
 {% block main %}
 {% endblock %}
 
-{% block 1%}
-{%endblock%}
+{% block 1 %}
+{% endblock %}
+
 {% block body %}
+<style>
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
+      .success-message {
+        display: none;
+        background-color: #4CAF50;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+    }
+</style>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h3>Ваша Корзина</h3>
+            <div class="card mt-4">
+                <div class="card-body">
+                    {% for order in order_entry %}
+                    <div class="order-entry">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <h4><a href="{% url 'carsite:detail' order.product.id %}">{{ order }}</a></h4>
+                                <p>Цена: {{ order.total }}$</p>
+                                <form action="{% url 'carsite:clear_concrete_order' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="text-right"> <!-- Добавлен класс 'text-right' -->
+                                        <button type="submit" class="btn btn-link btn-block btn-lg">Удалить</button>
+                                    </div>
+                                    <input type="hidden" name="id" value="{{ order.product.id }}">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    {% endfor %}
+                    {%if order_entry%}
+                    <div class="text-center">
+                        <form action="{% url 'carsite:make_order' %}" method="post"
+                              style="display: inline-block;">
+                            {% csrf_token %}
 
-{% for order in order_entry %}
-<br>
-<br>
-<li><a href="{% url 'carsite:detail' order.product.id %}">{{ order }}--{{order.total}}$--{{order.count}}</a></li>
-<p>
-<form action="{% url 'carsite:update_count' %}" method="post">
-    {% csrf_token %}
-    <input type="number" name='new' value="{{order.count}}"/>
-    <input type="submit" value="update" class="btn btn-link"/>
-    <input type="hidden" name="id" value="{{order.id}}"/>
-</form>
-</p>
+                            <input type="submit" value="Заказать" class="btn btn-primary btn-block btn-lg">
+                            <input type="hidden" name="status" value="{{ order.status }}">
+                        </form>
 
-<form action="{% url 'carsite:clear_concrete_order' %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="delete" class="btn btn-link"/>
-    <input type="hidden" name="id" value="{{order.product.id}}"/>
-</form><br>
-{% endfor %}
-<br>
-<br>
-<form action="{% url 'carsite:clear_order' %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="clear order" class="btn btn-link"/>
-</form>
-Total cost: {{total}}$
-<br>
-<br>
-<br>
-<form action="{% url 'carsite:make_order' %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="make order" class="btn btn-link"/>
-    <input type="hidden" name="status" value="{{order.status}}"/>
-</form>
+                        <form action="{% url 'carsite:clear_order' %}" method="post" style="display: inline-block;">
+                            {% csrf_token %}
+                            <input type="submit" value="Удалить" class="btn btn-link btn-block btn-lg">
+                        </form>
+                        <p class="text-center">Итоговая стоимость: {{ total }}$</p>
+                    </div>
+                    {%else %}
+                        Корзина пуста
+                    {%endif%}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+    <p>© 2024 My Car Site. All rights reserved.</p>
+</footer>
 {% endblock %}

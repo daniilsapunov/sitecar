@@ -7,6 +7,17 @@
 {% endblock %}
 
 {% block body %}
+<style>
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
 <div class="container">
     <div class="content">
         <div class="services">
@@ -35,6 +46,7 @@
     <title>Yandex Map Example</title>
     <script src="https://api-maps.yandex.ru/2.1/?apikey=ea42fc55-ef65-4567-b523-c3657be6f7ec&lang=en_US"
             type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Добавляем скрипт SweetAlert2 -->
     <style>
         .container {
             display: flex;
@@ -107,6 +119,19 @@
     function showServiceOnMap(latitude, longitude) {
         map.setCenter([latitude, longitude], 15); // Установка центра карты на выбранной метке
     }
+
+    function showSuccessMessage() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Форма отправлена',
+            text: 'Сообщение успешно отправлено!',
+            timer: 3000, // Время показа сообщения в миллисекундах
+            showConfirmButton: false // Не показывать кнопку подтверждения
+        });
+    }
 </script>
 </body>
+<footer>
+    <p>© 2024 My Car Site. All rights reserved.</p>
+</footer>
 {% endblock %}

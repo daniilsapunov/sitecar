@@ -5,22 +5,67 @@
 
 {% block 1%}
 {%endblock%}
+
 {% block body %}
+<style>
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
 
-{% for order in page_obj %}
-    <br>
-    Заказ номер: {{order.id}} <br>
-    {% for entries in order.entries %}
-        <a href="{% url 'carsite:detail' entries.product.id %}">{{entries}}</a>---{{entries.product.price}}$---{{entries.count}}<br>
-    {% endfor %}
-    <b>Total:</b> {{order.count}}$<br>
-    <form action="{% url 'carsite:repeat_order' %}" method="post">
-        {% csrf_token %}
-        <input type="submit" value="Повторить заказ" class="btn btn-danger"/>
-        <input type="hidden" name="new_id" value="{{order.id}}"/>
-        <br>
+    .order {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: #f8f9fa;
+    }
+
+    .order-details {
+        margin-bottom: 10px;
+    }
+
+    .order-total {
+        font-weight: bold;
+    }
+
+    .repeat-order-btn {
+        background-color: blue;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px; /* Добавляем закругление углов */
+    }
+</style>
+
+<div class="container">
+    {% for order in page_obj %}
+    <div class="order">
+        <div class="order-details">
+            Заказ номер: {{order.id}} <br>
+            {% for entries in order.entries %}
+            <a href="{% url 'carsite:detail' entries.product.id %}">{{entries}}</a><br>
+            {% endfor %}
+        </div>
+        <div class="order-total">
+            <b>Total:</b> {{order.count}}$
+        </div>
+        <form action="{% url 'carsite:repeat_order' %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="Повторить заказ" class="repeat-order-btn">
+            <input type="hidden" name="new_id" value="{{order.id}}">
         </form>
-{% endfor %}
+    </div>
+    {% endfor %}
+</div>
 
+<footer>
+    <p>© 2024 My Car Site. All rights reserved.</p>
+</footer>
 
 {% endblock %}

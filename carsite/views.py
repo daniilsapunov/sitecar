@@ -91,7 +91,7 @@ def add_to_cart(request):
             order_entry = OrderEntry.objects.get(order=profile.shopping_cart, product=product)
         except OrderEntry.DoesNotExist:
             order_entry = OrderEntry.objects.create(order=profile.shopping_cart, product=product)
-        order_entry.count += 1
+        order_entry.count = 1
         order_entry.save()
         return redirect('carsite:detail', product_id)
 
@@ -140,15 +140,25 @@ def update_count(request):
     return redirect('carsite:shopping_cart')
 
 
+@csrf_exempt
 def make_order(request):
     if request.method == 'POST':
         profile = Profile.objects.get(user=request.user)
         if profile.shopping_cart.order.exists():
+            email = request.user.email
+            print(email)
             profile.shopping_cart.status = 'COMPLETED'
             profile.shopping_cart.save()
             profile.shopping_cart = Order.objects.create(profile=profile)
             profile.save()
-            return redirect('carsite:success_order')
+            send_mail(
+                'Новое сообщение от компании',
+                f'Сообщение: Успешн00о заказано!',
+                'sapunowdany@yandex.ru',
+                [f'{email}'],  # Замените на вашу почту для получения сообщений
+                fail_silently=False,
+            )
+            return redirect('carsite:shopping_cart')
         else:
             return redirect('carsite:shopping_cart')
 

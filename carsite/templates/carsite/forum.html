@@ -3,7 +3,19 @@
 {% endblock %}
 {% block 1%}
 {% endblock %}
-{% block body%}<div class="container">
+{% block body%}
+<style>
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
+</style>
+<div class="container">
     <div class="row">
         <div class="col-lg-12">
             <div class="card-body text-center mb-4">
@@ -78,4 +90,7 @@
         text-decoration: none;
     }
 </style>
+<footer>
+    <p>© 2024 My Car Site. All rights reserved.</p>
+</footer>
 {% endblock %}

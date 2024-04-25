@@ -8,6 +8,15 @@
 
 {% block body %}
 <style>
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px;
+        text-align: center;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+    }
     .additional-content {
     margin-bottom: 20px;
     text-align: center;
@@ -84,5 +93,7 @@
         <p>Нет доступных категорий.</p>
     </div>
 {% endif %}
-
+<footer>
+    <p>© 2024 My Car Site. All rights reserved.</p>
+</footer>
 {% endblock %}
